@@ -1,0 +1,80 @@
+.page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: rgb(5,68,70);
+    background: linear-gradient(234deg, rgba(5,68,70,0.8801645658263305) 0%, rgba(9,102,121,0.7345063025210083) 35%, rgba(0,62,63,0.7625175070028012) 100%);
+}
+
+main {
+    width: 85%;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.top-row {
+    background: rgb(5,68,70);
+    background: linear-gradient(151deg, rgba(5,68,70,0.7485119047619048) 0%, rgba(9,102,121,0.31994047619047616) 35%, rgba(0,62,63,0.6952906162464986) 100%);
+    border-bottom: 1px solid #d6d5d5;
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    right: 0;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand-container {
+    flex: 1;
+}
+
+.navbar-brand {
+    font-family: 'Roboto', sans-serif;
+    font-size: 40px;
+    font-weight: bold;
+    margin-left: 10px;
+    text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.5);
+    color: floralwhite;
+}
+
+.container-fluid2 {
+    margin-left: 70%;
+    height: 80%;
+    margin-top: 8px;
+}
+
+    .container-fluid2 .navbar-toggler2 {
+        background-color: transparent;
+        border: 1px solid white;
+        width: 40px;
+        height: 40px;
+        color: #fff;
+    }
+
+.navbar-toggler2:focus {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.navbar-toggler2:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+
+.sidebar {
+    color: darkcyan;
+    width: 200px;
+    height: 100%;
+    position: sticky;
+    right: 0;
+}
+
+.body-container {
+    width: 85%;
+    align-items: center;
+    margin-top: 100px;
+}

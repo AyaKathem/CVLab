@@ -1,0 +1,52 @@
+﻿@page "/AdminLogin"
+@inject NavigationManager NavigationManager
+
+@inject CVLab.Interfaces.IAuthenticationService AuthenticationService
+@using Microsoft.AspNetCore.Components.Forms
+
+    <h3>Login</h3>
+
+    <form class="login-form" @onsubmit="HandleSubmit">
+        <div class="form-group">
+            <label for="username">Username or Email:</label>
+            <input id="username" @bind="loginModel.Username" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" @bind="loginModel.Password" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+@if (ShowAlert)
+{
+    <div class="alert alert-danger" role="alert"style="margin-top: 20px;">
+        Incorrect login information. Please try again.
+    </div>
+}
+
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private ElementReference container1Ref;
+    private bool ShowAlert = false;
+    private async Task HandleSubmit()
+    {
+        bool isAuthenticated = await AuthenticationService.AuthenticateAsync(loginModel.Username, loginModel.Password);
+        if (isAuthenticated)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            ShowAlert = true;
+        }
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+}

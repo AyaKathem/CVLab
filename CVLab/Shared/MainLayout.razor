@@ -1,0 +1,46 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<PageTitle>singlePageCV</PageTitle>
+
+<div class="page">
+    <main>
+        <div class="top-row px-4">
+            <div class="navbar-brand-container">
+                <a class="navbar-brand" href="/">ALI KATHEM</a>
+            </div>
+            
+            <div class="sidebar">
+               <div class="container-fluid2">
+                <button title="Login" class="navbar-toggler2" @onclick="ToggleLogin">
+                        <span class="fas fa-user-alt fa-xl"></span> 
+                </button>
+            </div>
+            </div>
+        </div>
+      
+        <div class="body">
+           
+               @Body 
+           <CvMain />
+        </div>
+    </main>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : "menu-right"; 
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+    @code {
+        private void ToggleLogin()
+        {
+            
+            NavigationManager.NavigateTo("AdminLogin");
+        }
+    }
+}

@@ -1,0 +1,111 @@
+﻿.Main {
+    margin-top:100px;
+    display: flex; 
+    align-items: flex-start; 
+    justify-content: flex-start;
+    background-color: #f7f7f7;
+    padding: 20px; 
+    border-bottom: 1px solid black;
+}
+
+.PersonalContainer {
+    display: flex; 
+    flex-direction: column; 
+}
+
+.PersonalName {
+    font-family: Garamond, serif;
+    font-size: 40px; 
+    margin-left: 10px;
+    text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.5); 
+    color: darkslategrey;
+    width: 300px;
+    border-bottom: 3px solid black; 
+}
+
+.PersonalInfo {
+    font-family: Garamond, serif;
+    font-size: 20px; 
+    margin-top: 30px; 
+    margin-left: 10px;
+    text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.5); 
+    color: darkslategrey;
+}
+
+.img1 {
+    margin-right: 20px; 
+}
+
+    .img1 img {
+        width: 400px; 
+        height: 600px; 
+    }
+
+@media (max-width: 640.98px) {
+    .img1 img {
+        width: 200px; 
+        height: 400px; 
+    }
+}
+
+
+
+
+
+
+
+
+.ButtonDiv {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+
+
+.Main3{
+    display: flex; 
+    align-items: flex-start; 
+    justify-content: flex-start;
+    background-color: #f7f7f7;
+    flex-direction: column;
+    padding: 20px;
+    font-family: Garamond, serif;
+    color: darkslategrey;
+    border-bottom: 1px solid black;
+}
+
+.SkillCont {
+    display: flex; 
+    flex-direction: column;
+}
+.container1 {
+    background-color: rgb(47, 79, 79, 0.55);
+    width: 100%;
+    margin-right: 10%;
+    color: snow;
+}
+
+.fill {
+    height: 20px;
+    background-color: darkslategray;
+    color: antiquewhite;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.ButtonDiv {
+    display: flex;
+    margin-bottom: 20px;
+}
