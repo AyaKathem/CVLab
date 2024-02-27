@@ -10,7 +10,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>(); // Register the AuthenticationService
-var connectionString = Environment.GetEnvironmentVariable("Mongo-data-cv");
+var connectionString = "mongodb://localhost:27017";
 Console.Write(connectionString);
 // Inject MongoDB services
 builder.Services.AddSingleton<MongoDBService>(sp => new MongoDBService(connectionString, "Skill"));
