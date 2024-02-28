@@ -1,0 +1,193 @@
+﻿@inject CVLab.Interfaces.IAuthenticationService AuthenticationService
+@inject CVLab.Services.MongoDBService4 MongoDB4
+@using CVLab.Data
+
+
+@if (AuthenticationService.IsAuthenticated)
+{
+
+    <div class="ButtonDiv">
+        <button type="button" @onclick="ShowAddProjectForm1" style=" margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey ;">
+            Lägg till
+        </button>
+        <button type="button" @onclick="ShowEditProjectForm1" style="  margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey  ;">Redigera</button>
+    </div>
+    @if (ShowEditProjectForm)
+    {
+            <div class="container1">
+            <div style=" margin-left: 20px;">
+                <form @onsubmit="EditProject1">
+                    <br>
+                    <label for="name">Gammal Projekt namn:</label>
+                    <br>
+                    <input type="text" id="name" @bind="titel" />
+                    <br>
+                    <label for="name">Ny Projekt namn:</label>
+                    <br>
+                    <input type="text" id="name" @bind="EditaProject.Titel" />
+                    <br>
+                    <label for="name">Beskrivning:</label>
+                    <br>
+                    <textarea id="myTextarea" name="myTextarea" rows="4" cols="50" @bind="EditaProject.Text">
+                                                </textarea>
+                    <br>
+                    <button type="submit" style="width:120px; margin-bottom:15px;   background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Redigera</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (showAddProjectForm)
+    {
+            <div class="container1">
+            <div style=" margin-left: 20px;">
+                <form @onsubmit="AddProject">
+                    <br>
+                    <label for="name">Projekt namn:</label>
+                    <br>
+                    <input type="text" id="name" @bind="NewProject.Titel" />
+                    <br>
+                    <label for="name">Beskrivning:</label>
+                    <br>
+                    <textarea id="myTextarea" name="myTextarea" rows="4" cols="50" @bind="NewProject.Text">
+                                                </textarea>
+                    <br>
+                    <button type="submit" style="width:120px;   margin-bottom:15px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Lägg till</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+    }
+}
+<h3 style="font-weight: bold">Projekt</h3>
+@if (Data3 == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Projekt</th>
+                <th>Beskrivning</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Data3)
+            {
+                <tr>
+                    <td style="font-weight: bold">@item.Titel</td>
+                    <td>@item.Text</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+<style>
+    .container1 {
+        background-color: rgb(47, 79, 79, 0.55);
+        width: 100%;
+        margin-right: 10%;
+        color: snow;
+    }
+    .ButtonDiv {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+    .fill {
+        height: 20px;
+        background-color: darkslategray;
+        color: antiquewhite;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #dddddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+</style>
+@code {
+    private List<Project> Data3;
+    private Project NewProject = new Project();
+    private Project EditaProject = new Project();
+    private bool showAddProjectForm = false;
+    private bool ShowEditProjectForm = false;
+    private bool ShowDeletProjectForm = false;
+    private string titel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Data3 = await MongoDB4.GetProjectAsync();
+    }
+    private void ShowDeletProjectorm1()
+    {
+        if (ShowDeletProjectForm == false)
+        {
+            ShowEditProjectForm = false;
+            showAddProjectForm = false;
+            ShowDeletProjectForm = true;
+        }
+        else
+        {
+            ShowDeletProjectForm = false;
+        }
+
+    }
+    private void ShowEditProjectForm1()
+    {
+        if (ShowEditProjectForm == false){
+            ShowEditProjectForm = true;
+            showAddProjectForm = false;
+            ShowDeletProjectForm = false;
+        }else{
+            ShowEditProjectForm = false;
+        }
+    }
+
+    private void ShowAddProjectForm1()
+    {
+        if (showAddProjectForm == false)
+        {
+            ShowEditProjectForm = false;
+            showAddProjectForm = true;
+            ShowDeletProjectForm = false;
+        }
+        else
+        {
+            showAddProjectForm = false;
+        }
+
+    }
+
+    private async Task AddProject()
+    {
+        await MongoDB4.AddProjectAsync(NewProject);
+        NewProject = new Project();
+        Data3 = await MongoDB4.GetProjectAsync();
+    }
+    private async Task EditProject1()
+    {
+        NewProject = await MongoDB4.GetProjectByNameAsync(titel);
+        await MongoDB4.UpdateProjectAsync(NewProject.Id, EditaProject);
+        EditaProject = new Project();
+        Data3 = await MongoDB4.GetProjectAsync();
+        ShowEditProjectForm = false;
+    }
+
+
+}

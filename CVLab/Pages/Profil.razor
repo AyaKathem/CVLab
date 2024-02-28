@@ -1,0 +1,162 @@
+﻿@inject CVLab.Services.MongoDBService2 MongoDB
+@inject CVLab.Interfaces.IAuthenticationService AuthenticationService
+
+
+@using CVLab.Data
+
+
+
+
+
+<div>
+    @if (AuthenticationService.IsAuthenticated)
+    {
+        <div class="ButtonDiv ">
+            <button type="button" @onclick="ShowAddProfilForm1" style=" margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey ;">
+                Lägg till
+            </button>
+            <button type="button" @onclick="ShowEditProfilForm1" style="  margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey  ;">Redigera</button>
+        </div>
+        @if (ShowEditProfilForm)
+        {
+            <h3 style="font-weight: bold">Redigera</h3>
+            <div class="container1" >
+                <div style=" margin-left: 20px;">
+                    <form @onsubmit="EditProfil">
+                        <br>
+                        <label for="name">Gammal Titel:</label>
+                        <br>
+                        <input type="text" id="name" @bind="titel" />
+                        <br>
+                        <label for="name">Titel:</label>
+                        <br>
+                        <input type="text" id="name" @bind="EditaProfil.Titel" />
+                        <br>
+                        <label for="name">Text:</label>
+                        <br>
+                        <textarea id="myTextarea" name="myTextarea" rows="4" cols="50" @bind="EditaProfil.Text">
+                                </textarea>
+                        <br>
+                        <button type="submit" style="width:120px; margin-bottom:15px; background-color: rgb(47, 79, 79, 0.80); color: white; border: 1px solid white ;">Redigera</button>
+                        <br>
+                    </form>
+                </div>
+            </div>
+        }
+
+        @if (showAddProfilForm)
+        {
+            <h3>Lägg till</h3>
+            <div class="container1" style="margin-top:10px;">
+                <div style=" margin-left: 20px;">
+
+                    <form @onsubmit="AddProfil">
+                        <br>
+                        <label for="name">Titel:</label>
+                        <br>
+                        <input type="text" id="name" @bind="NewCvMainDate.Titel" />
+                        <br>
+                        <label for="name">Text:</label>
+                        <br>
+                        <textarea id="myTextarea" name="myTextarea" rows="4" cols="50" @bind="NewCvMainDate.Text">
+                                </textarea>
+                        <br>
+                        <button type="submit" style="width:120px; margin-bottom:15px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Lägg till</button>
+                        <br>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+    
+    @if (Data == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        @foreach (var item in Data)
+        {
+            <div class="Profilcont">
+                <h3 style="font-weight: bold"> @item.Titel</h3>
+               
+                @item.Text
+
+            </div>
+        }
+    }
+</div>
+<style>
+    .container1 {
+        background-color: rgb(47, 79, 79, 0.55);
+        width: 100%;
+        margin-right: 10%;
+        color: snow;
+    }
+
+    .ButtonDiv {
+        display: flex;
+        margin-bottom: 20px;
+    }
+</style>
+@code {
+    private List<CvMainDate> Data;
+    private CvMainDate NewCvMainDate = new CvMainDate();
+    private CvMainDate EditaProfil = new CvMainDate();
+    private bool showAddProfilForm = false;
+    private bool ShowEditProfilForm = false;
+    private bool ShowDeletProfilForm = false;
+    private string titel;
+
+  
+    private void ShowEditProfilForm1()
+    {
+        if (ShowEditProfilForm == false){
+            ShowEditProfilForm = true;
+            showAddProfilForm = false;
+            ShowDeletProfilForm = false;
+        }else{
+            ShowEditProfilForm = false;
+        }
+           
+
+
+        }
+
+        private void ShowAddProfilForm1()
+        {
+            if (showAddProfilForm == false)
+            {
+                ShowEditProfilForm = false;
+                showAddProfilForm = true;
+                ShowDeletProfilForm = false;
+            }
+            else
+            {
+                showAddProfilForm = false;
+            }
+
+        }
+        protected override async Task OnInitializedAsync()
+        {
+            Data = await MongoDB.GetProfilAsync();
+            
+
+        }
+
+        private async Task AddProfil()
+        {
+            await MongoDB.AddProfiilAsync(NewCvMainDate);
+            NewCvMainDate = new CvMainDate();
+            Data = await MongoDB.GetProfilAsync();
+            showAddProfilForm = false;
+        }
+        private async Task EditProfil()
+        {
+            NewCvMainDate = await MongoDB.GetProfilByNameAsync(titel);
+            await MongoDB.UpdateProfilAsync(NewCvMainDate.Id, EditaProfil);
+            EditaProfil = new CvMainDate();
+            Data = await MongoDB.GetProfilAsync();
+            ShowEditProfilForm = false;
+        }
+}

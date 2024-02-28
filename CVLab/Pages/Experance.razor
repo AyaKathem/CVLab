@@ -1,0 +1,257 @@
+﻿@inject CVLab.Interfaces.IAuthenticationService AuthenticationService
+@inject CVLab.Services.MongoDBService3 MongoDB3
+
+@using CVLab.Data
+@if (AuthenticationService.IsAuthenticated)
+{
+    <div class="ButtonDiv">
+        <button type="button" @onclick="ShowAddWorkForm1" style=" margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey ;">
+            Lägg till
+        </button>
+        <button type="button" @onclick="ShowEditWorkForm1" style="  margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey  ;">Redigera</button>
+        <button type="button" @onclick="ShowDeletWorkForm1" style="  margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey  ;">Tabort </button>
+    </div>
+
+
+    @if (ShowDeletWorkForm)
+    {
+        <h3>Tabort</h3>
+        <div class="container1" style="height = 180px;">
+            <div style=" margin-left: 20px;">
+                <form @onsubmit="DeleteWork">
+                    <br>
+                    <label for="Id">Jobb/Utbildning Id:</label>
+                    <br>
+                    <input type="text" id="name" @bind="Id" style=" margin-bottom: 10px;" />
+                    <br>
+                    <button type="submit" style="width:120px;  margin-bottom:15px;  background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Tabort</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+    }
+    @if (ShowEditWorkForm)
+    {
+        <h3>Redigera</h3>
+        <div class="container1" style="height = 600px;">
+            <div style=" margin-left: 20px;">
+                <form @onsubmit="EditWorkform">
+                    <label for="Id">Jobb/Utbildning Id:</label>
+                    <br>
+                    <input type="text" id="Id" @bind="WorkId" style="margin-bottom: 10px;" />
+                    <br>
+                    <label for="Company">Förtag/Skola namn:</label>
+                    <br>
+                    <input type="text" id="Company" @bind="EditWork.Place" style="margin-bottom: 10px; " />
+                    <br>
+                    <label for="Titel">Titel:</label>
+                    <br>
+                    <input type="text" id="Titel" @bind="EditWork.Titel" style="margin-bottom: 10px;" />
+                    <br>
+                    <label for="startDate">Start Datum:</label>
+                    <br>
+                    <input type="date" id="startDate" @bind="EditWork.startDate" style="margin-bottom: 10px; " />
+                    <br>
+                    <label for="endDate">Slut Datum:</label>
+                    <br>
+                    <input type="date" id="endDate" @bind="EditWork.endDate" style="margin-bottom: 10px;" />
+                    <br>
+                    <label for="Description">Beskrivning:</label>
+                    <br>
+                    <textarea id="myTextarea" name="myTextarea" rows="4" cols="50" @bind="EditWork.text">
+
+                                    </textarea>
+                    <br>
+                    <button type="submit" style="width:120px;  margin-bottom:15px;  background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Redigera</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+    }
+    @if (showAddWorkForm)
+    {
+        <div class="container1" style="height = 600px;">
+            <div style=" margin-left: 20px;">
+                <form @onsubmit="AddWork">
+
+                    <label for="Company">Förtag/Skola namn:</label>
+                    <br>
+                    <input type="text" id="Company" @bind="NewWork.Place" style="margin-bottom: 10px; " />
+                    <br>
+                    <label id="type" for="type">Välja kategori</label>
+                    <br>
+                    <select @bind="NewWork.type">
+                        <option value="">Välja</option>
+                        <option value="Jobb">Jobb</option>
+                        <option value="Utbildning">Utbildning</option>
+                    </select>
+                    <br />
+                    <label for="Titel">Titel:</label>
+                    <br>
+                    <input type="text" id="Titel" @bind="NewWork.Titel" style="margin-bottom: 10px;" />
+                    <br>
+                    <label for="startDate">Start Datum:</label>
+                    <br>
+                    <input type="date" id="startDate" @bind="NewWork.startDate" style="margin-bottom: 10px;" />
+                    <br>
+                    <label for="endDate">Slut Datum:</label>
+                    <br>
+                    <input type="date" id="endDate" @bind="NewWork.endDate" style="margin-bottom: 10px; " />
+                    <br>
+                    <label for="Description">Beskrivning:</label>
+                    <br>
+                    <textarea id="myTextarea" name="myTextarea" rows="4" cols="50" @bind="NewWork.text">
+                                    </textarea>
+                    <br>
+                    <button type="submit" style="width:120px;  margin-bottom:15px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Lägg till</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+    }
+}
+<h3 style="font-weight: bold">Arbete erfarenhet</h3>
+@if (Data4 == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @foreach (var item in Data4)
+    {
+        @if (item.type == "Jobb")
+        {
+            <div class="SkillCont" style="margin-top: 20px;border-bottom: 0.5px solid darkslategrey ;">
+                ID: @item.Id
+                <p style="font-weight: bold"> @item.Place</p>
+                @item.Titel | @item.startDate.Year/ @item.startDate.Month - @item.endDate.Date.Year /@item.endDate.Date.Month
+                <br>
+                @item.text
+                <br>
+            </div>
+        }
+    }
+}
+
+<br>
+<h3 style="font-weight: bold">Utbildning</h3>
+@if (Data4 == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @foreach (var item in Data4)
+    {
+        @if (item.type == "Utbildning")
+        {
+            <div class="SkillCont" style="margin-top: 20px;border-bottom: 0.5px solid darkslategrey;">
+                ID: @item.Id
+                <p style="font-weight: bold"> @item.Place</p>
+                @item.Titel | @item.startDate.Year/ @item.startDate.Month - @item.endDate.Date.Year /@item.endDate.Date.Month
+                <br>
+                @item.text
+                <br>
+            </div>
+        }
+    }
+}
+<style>
+    .container1 {
+        background-color: rgb(47, 79, 79, 0.55);
+        width: 100%;
+        margin-right: 10%;
+        color: snow;
+    }
+
+    .ButtonDiv {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    .SkillCont {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+@code {
+    private List<WorkExperience> Data4;
+    private WorkExperience NewWork = new WorkExperience();
+    private WorkExperience EditWork = new WorkExperience();
+    private String WorkId;
+    private bool showAddWorkForm = false;
+    private bool ShowEditWorkForm = false;
+    private bool ShowDeletWorkForm = false;
+    private String Id;
+    protected override async Task OnInitializedAsync()
+    {
+
+        Data4 = await MongoDB3.GetWorkAsync();
+    }
+    private async Task EditWorkform()
+    {
+        NewWork = await MongoDB3.GetWorkByIdAsync(Id);
+        await MongoDB3.UpdateWorkAsync(NewWork.Id, EditWork);
+        EditWork = new WorkExperience();
+        Data4 = await MongoDB3.GetWorkAsync();
+        ShowEditWorkForm = false;
+    }
+    private async Task DeleteWork()
+    {
+        NewWork = await MongoDB3.GetWorkByIdAsync(Id);
+        await MongoDB3.DeleteWorkAsync(NewWork.Id);
+        NewWork = new WorkExperience();
+        Data4 = await MongoDB3.GetWorkAsync();
+        ShowDeletWorkForm = false;
+    }
+    private async Task AddWork()
+    {
+        await MongoDB3.AddSWorkAsync(NewWork);
+        NewWork = new WorkExperience();
+        Data4 = await MongoDB3.GetWorkAsync();
+        showAddWorkForm = false;
+    }
+    private void ShowDeletWorkForm1()
+    {
+        if (ShowDeletWorkForm == false) {
+            ShowEditWorkForm = false;
+            showAddWorkForm = false;
+            ShowDeletWorkForm = true;
+        } else
+        {
+            ShowDeletWorkForm = false;
+        }
+
+    }
+    private void ShowEditWorkForm1()
+    {
+        if (ShowEditWorkForm == false)
+        {
+            ShowEditWorkForm = true;
+            showAddWorkForm = false;
+            ShowDeletWorkForm = false;
+        }
+        else
+        {
+            ShowEditWorkForm = false;
+        }
+
+
+    }
+
+    private void ShowAddWorkForm1()
+    {
+        if (showAddWorkForm == false)
+        {
+            ShowEditWorkForm = false;
+            showAddWorkForm = true;
+            ShowDeletWorkForm = false;
+        }
+        else
+        {
+            showAddWorkForm = false;    
+        }
+
+    }
+
+}

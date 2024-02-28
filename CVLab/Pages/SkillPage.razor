@@ -1,0 +1,218 @@
+﻿@inject CVLab.Interfaces.IAuthenticationService AuthenticationService
+@inject CVLab.Services.MongoDBService MongoDB2
+
+@using CVLab.Data
+@if (AuthenticationService.IsAuthenticated)
+{
+    <div class="ButtonDiv">
+        <button type="button" @onclick="ShowAddSkillForm" style=" margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey ;">
+            Lägg till
+        </button>
+        <button type="button" @onclick="ShowEditSkillForm1" style="  margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey  ;">Redigeral</button>
+        <button type="button" @onclick="ShowDeletSkillForm1" style="  margin-right: 10px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 3px darkslategrey  ;">Tabort</button>
+    </div>
+
+    @if (ShowDeletSkillForm)
+    {
+        <h3>Tabort</h3>
+        <div class="container1">
+            <div style=" margin-left: 20px;">
+                <form @onsubmit="DeleteSkill">
+                    <br>
+                    <label for="SkillName">Kompetens namn:</label>
+                    <br>
+                    <input type="text" id="name" @bind="Id" style=" margin-bottom: 10px; " />
+                    <br>
+                    <button type="submit" style="width:120px; margin-bottom:15px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Tabort</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+    }
+    @if (ShowEditSkillForm)
+    {
+        <h3>Redigera</h3>
+        <div class="container1">
+            <div style=" margin-left: 20px;">
+                <form @onsubmit="EditSkill">
+                    <br>
+                    <label for="SkillName">Gammal kompetens namn:</label>
+                    <br>
+                    <input type="text" id="name" @bind="Id" style=" margin-bottom: 10px;;" />
+                    <br>
+                    <label for="SkillName">Kompetens namn:</label>
+                    <br>
+                    <input type="text" id="name" @bind="EditaSkill.SkellName" style=" margin-bottom: 10px; ;" />
+                    <br>
+                    <label for="Antalår">Antal år:  </label>
+                    <br>
+                    <input type="text" id="years" @bind="EditaSkill.YearsOfExperience" style=" margin-bottom: 10px; ;" />
+                    <br>
+                    <label for="SkillNivå">Kompetens nivå: </label>
+                    <br>
+                    <input type="text" id="level" @bind="EditaSkill.level" style=" margin-bottom: 10px; " />
+                    <br>
+                    <button type="submit" style="width:120px; margin-bottom:15px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Redigera</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+    }
+    @if (showAddSkillForm)
+    {
+        <h3>Add New Skill</h3>
+        <div class="container1" style="height = 300px;">
+            <div style=" margin-left: 20px;">
+                <form @onsubmit="AddSkill">
+                    <br>
+                    <label for="SkillName">Kompetens namn:</label>
+                    <br>
+                    <input type="text" id="name" @bind="NewSkill.SkellName" style=" margin-bottom: 10px; " />
+                    <br>
+                    <label for="Antalår">Antal år:  </label>
+                    <br>
+                    <input type="text" id="years" @bind="NewSkill.YearsOfExperience" style=" " />
+                    <br>
+                    <label for="SkillNivå">Kompetens nivå: </label>
+                    <br>
+                    <input type="text" id="level" @bind="NewSkill.level" style=" margin-bottom: 10px; " />
+                    <br>
+                    <button type="submit" style="width:120px; margin-bottom:15px; background-color: rgb(47, 79, 79, 0.80); color: white;   border: 1px solid white ;">Lägg till</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+    }
+}
+<h3 style="font-weight: bold">Teknisk Kompetenser:</h3>
+@if (Data2 == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Kompetens Namn</th>
+                <th>År av erfarenhet</th>
+                <th>Kompetens nivå (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Data2)
+            {
+                <tr>
+                    <td>@item.SkellName</td>
+                    <td>@item.YearsOfExperience</td>
+                    <td>
+                        <div class="rectangle" style="background-color: gray; width: 300px; height: 20px;">
+                            <div class="fill" style="width:@item.level%;">@item.level%</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<style>
+    .container1 {
+        background-color: rgb(47, 79, 79, 0.55);
+        width: 100%;
+        margin-right: 10%;
+        color: snow;
+    }
+
+    .ButtonDiv {
+        display: flex;
+        margin-bottom: 20px;
+    }
+</style>
+@code {
+
+    private List<Skill> Data2;
+    private Skill NewSkill = new Skill();
+    private Skill EditaSkill = new Skill();
+    private String Id;
+    private bool showAddSkillForm = false;
+    private bool ShowEditSkillForm = false;
+    private bool ShowDeletSkillForm = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Data2= await MongoDB2.GetSkillsAsync();
+
+
+    }
+
+    private async Task EditSkill()
+    {
+        NewSkill = await MongoDB2.GetSkillByNameAsync(Id);
+        await MongoDB2.UpdateSkillAsync(NewSkill.Id, EditaSkill);
+        EditaSkill = new Skill();
+        Data2 = await MongoDB2.GetSkillsAsync();
+        ShowEditSkillForm = false;
+    }
+
+    private async Task DeleteSkill()
+    {
+        NewSkill = await MongoDB2.GetSkillByNameAsync(Id);
+        await MongoDB2.DeleteSkillAsync(NewSkill.Id);
+        NewSkill = new Skill();
+        Data2 = await MongoDB2.GetSkillsAsync();
+        ShowDeletSkillForm = false;
+    }
+    private async Task AddSkill()
+    {
+        await MongoDB2.AddSkillAsync(NewSkill);
+        NewSkill = new Skill();
+        Data2 = await MongoDB2.GetSkillsAsync();
+        showAddSkillForm = false;
+    }
+    private void ShowDeletSkillForm1()
+    {
+        if (ShowDeletSkillForm == false)
+        {
+            ShowEditSkillForm = false;
+            showAddSkillForm = false;
+            ShowDeletSkillForm = true;
+        }
+        else
+        {
+            ShowDeletSkillForm = false;
+        }
+
+    }
+    private void ShowEditSkillForm1()
+    {
+        if (ShowEditSkillForm == false)
+        {
+            ShowEditSkillForm = true;
+            showAddSkillForm = false;
+            ShowDeletSkillForm = false;
+        }
+        else
+        {
+            ShowEditSkillForm = false;
+        }
+
+
+    }
+
+    private void ShowAddSkillForm()
+    {
+        if (showAddSkillForm == false)
+        {
+            ShowEditSkillForm = false;
+            showAddSkillForm = true;
+            ShowDeletSkillForm = false;
+        }
+        else
+        {
+            showAddSkillForm = false;
+        }
+
+    }
+
+}
